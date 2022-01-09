@@ -4,6 +4,8 @@
 
 `./host_runner.sh`
 
-#run snake
+#run snake:
+
 `python snake_env.py`
+
 `python agent_1.py`
