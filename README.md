@@ -1,4 +1,7 @@
 # RA_project
+# pull docker
+
+`docker pull towgroup/ra:latest`
 
 #run docker:
 
