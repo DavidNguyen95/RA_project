@@ -9,6 +9,7 @@
 `./host_runner.sh`
 
 # run snake:
+`cd snake`
 
 `python snake_env.py`
 
