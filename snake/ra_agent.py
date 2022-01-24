@@ -3,7 +3,7 @@
 class RA_agent:
     def __init__(self):
 
-# parser to parse the ltlf formula
+# setup DFA state and transitions
 
         self.states = {"q1","q2","q3"}
         self.transitions()
@@ -24,11 +24,9 @@ class RA_agent:
         }
 
         self.state_dict = {
-
             (False,False):"q1",
             (True,False):"q2",
             (True,True):"q3" 
-
         }
 
 
@@ -54,7 +52,7 @@ class RA_agent:
             
     def trace(self,food): 
         ##  note add state in env.step function; 
-        ##   no eat : food = None l eat red: food = "red" | eat green : food = "green"
+        ##  no eat : food = None | eat red: food = "red" | eat green : food = "green"
         
         ra_reward  = 0
         key_state = self.compute_RA_state(food) #(red,green) (True False)
@@ -73,7 +71,6 @@ class RA_agent:
             if self.initialState=self.finalState:
                 self.reset() 
  
-
         return ra_reward
 
 
