@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-class parser:
+class RA_agent:
     def __init__(self):
 
 # parser to parse the ltlf formula
