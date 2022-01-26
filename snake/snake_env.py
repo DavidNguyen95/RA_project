@@ -43,7 +43,7 @@ class Snake(gym.Env):
         self.human = human
         self.env_info = env_info
         self.food_count=0
-        self.eaten_food="none"
+        self.eaten_food="no food"
 
         ## GAME CREATION WITH TURTLE (RENDER?)
         # screen/background
