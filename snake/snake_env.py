@@ -296,7 +296,7 @@ class Snake(gym.Env):
         if self.human:
             time.sleep(SLEEP)
             state = self.get_state()
-        print(self.eaten_food)
+        #print(self.eaten_food)
 
     # AI agent
 
