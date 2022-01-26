@@ -157,6 +157,7 @@ class Snake(gym.Env):
             if not first:
 
                 data=self.ra_agent_params(dummy=True)
+                #print("hahahahah",data)
                 self.update_score()
                 self.add_to_body()
 
@@ -267,7 +268,9 @@ class Snake(gym.Env):
         reward_given = False
         self.win.update()
         self.move_snake()
+        self.eaten_food="no food"
         if self.move_apple():
+            #print("dang o dayyyyyy")
             self.reward = 10
             reward_given = True
         self.move_snakebody()
@@ -293,6 +296,7 @@ class Snake(gym.Env):
         if self.human:
             time.sleep(SLEEP)
             state = self.get_state()
+        print(self.eaten_food)
 
     # AI agent
 
@@ -305,11 +309,13 @@ class Snake(gym.Env):
             self.go_down()
         if action == 3:
             self.go_left()
+        
         self.run_game()
         state = self.get_state()
         return state, self.reward, self.done, {}
 
     def get_state(self):
+        
         # snake coordinates abs
         self.snake.x, self.snake.y = self.snake.xcor()/WIDTH, self.snake.ycor()/HEIGHT
         # snake coordinates scaled 0-1
@@ -407,6 +413,8 @@ class Snake(gym.Env):
                      int(self.snake.direction == 'up'), int(self.snake.direction == 'right'), int(self.snake.direction == 'down'), int(self.snake.direction == 'left')]
 
         # print(state)
+        #print(self.eaten_food)
+        
         return state
 
     def bye(self):
@@ -416,7 +424,7 @@ class Snake(gym.Env):
 if __name__ == '__main__':
     human = True
     env = Snake(human=human)
-
+    
     if human:
         while True:
             env.run_game()
