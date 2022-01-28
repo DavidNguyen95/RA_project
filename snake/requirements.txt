@@ -56,7 +56,6 @@ matplotlib==3.2.1
 mistune==0.8.4
 mkl-fft
 mkl-random
-mkl-service
 nbconvert==5.6.1
 nbformat==5.0.4
 networkx==2.4
