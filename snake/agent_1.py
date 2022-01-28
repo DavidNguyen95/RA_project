@@ -19,32 +19,30 @@ class DQN:
 
         self.action_space = env.action_space
         self.state_space = env.state_space
-        self.epsilon = params['epsilon'] 
-        self.gamma = params['gamma'] 
-        self.batch_size = params['batch_size'] 
-        self.epsilon_min = params['epsilon_min'] 
-        self.epsilon_decay = params['epsilon_decay'] 
+        self.epsilon = params['epsilon']
+        self.gamma = params['gamma']
+        self.batch_size = params['batch_size']
+        self.epsilon_min = params['epsilon_min']
+        self.epsilon_decay = params['epsilon_decay']
         self.learning_rate = params['learning_rate']
         self.layer_sizes = params['layer_sizes']
         self.memory = deque(maxlen=2500)
         self.model = self.build_model()
 
-
     def build_model(self):
         model = Sequential()
         for i in range(len(self.layer_sizes)):
             if i == 0:
-                model.add(Dense(self.layer_sizes[i], input_shape=(self.state_space,), activation='relu'))
+                model.add(Dense(self.layer_sizes[i], input_shape=(
+                    self.state_space,), activation='relu'))
             else:
                 model.add(Dense(self.layer_sizes[i], activation='relu'))
         model.add(Dense(self.action_space, activation='softmax'))
         model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
         return model
 
-
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
-
 
     def act(self, state):
 
@@ -52,7 +50,6 @@ class DQN:
             return random.randrange(self.action_space)
         act_values = self.model.predict(state)
         return np.argmax(act_values[0])
-
 
     def replay(self):
 
@@ -69,7 +66,8 @@ class DQN:
         states = np.squeeze(states)
         next_states = np.squeeze(next_states)
 
-        targets = rewards + self.gamma*(np.amax(self.model.predict_on_batch(next_states), axis=1))*(1-dones)
+        targets = rewards + self.gamma * \
+            (np.amax(self.model.predict_on_batch(next_states), axis=1))*(1-dones)
         targets_full = self.model.predict_on_batch(states)
 
         ind = np.array([i for i in range(self.batch_size)])
@@ -128,7 +126,8 @@ if __name__ == '__main__':
     #     params['batch_size'] = batchsz
     #     nm = ''
     #     params['name'] = f'Batchsize {batchsz}'
-    env_infos = {'States: only walls':{'state_space':'no body knowledge'}, 'States: direction 0 or 1':{'state_space':''}, 'States: coordinates':{'state_space':'coordinates'}, 'States: no direction':{'state_space':'no direction'}}
+    env_infos = {'States: only walls': {'state_space': 'no body knowledge'}, 'States: direction 0 or 1': {
+        'state_space': ''}, 'States: coordinates': {'state_space': 'coordinates'}, 'States: no direction': {'state_space': 'no direction'}}
 
     # for key in env_infos.keys():
     #     params['name'] = key
@@ -138,6 +137,5 @@ if __name__ == '__main__':
     env = Snake()
     sum_of_rewards = train_dqn(ep, env)
     results[params['name']] = sum_of_rewards
-    
+
     plot_result(results, direct=True, k=20)
-    
