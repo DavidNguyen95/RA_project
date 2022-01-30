@@ -30,20 +30,22 @@ MEAT_SHAPE = 'square'
 
 class Snake(gym.Env):
 
-    def __init__(self, human=False, env_info={'state_space': None}):#coodinates
+    def __init__(self, human=False, env_info={'state_space': None}):#coodinates can use but convegence slow
         super(Snake, self).__init__()
 
         self.done = False
         self.seed()
         self.reward = 0
         self.action_space = 4
-        self.state_space = 16
+        self.state_space = 18
 
         self.total, self.maximum = 0, 0
         self.human = human
         self.env_info = env_info
         self.food_count=0
         self.eaten_food="no food"
+        self.eaten_apple=0
+        self.eaten_meat =0 
 
         ## GAME CREATION WITH TURTLE (RENDER?)
         # screen/background
@@ -171,12 +173,16 @@ class Snake(gym.Env):
         if dummy:
             if not self.body_check_apple() and self.dist_apple < self.dist_meat:
                 self.eaten_food = "green"
+                self.eaten_apple=1
+                self.eaten_meat=0
             elif not self.body_check_meat():
                 self.eaten_food="red"
+                self.eaten_meat=1
+                self.eaten_apple=0
         else:
             self.eaten_food="no food"
         #print(self.eaten_food)
-        return self.eaten_food
+        return self.eaten_food,self.eaten_apple,self.eaten_meat
             
 
     def update_score(self):
@@ -260,19 +266,22 @@ class Snake(gym.Env):
         self.reward = 0
         self.total = 0
         self.done = False
-
+        self.eaten_apple=0
+        self.eaten_meat =0 
+        self.eaten_food="no food"
         state = self.get_state()
 
         return state
 
     def run_game(self):
+        self.eaten_food="no food"
         reward_given = False
         self.win.update()
         self.move_snake()
-        self.eaten_food="no food"
+        
         if self.move_apple():
             #print("dang o dayyyyyy")
-            self.reward = 10
+            self.reward = 0
             reward_given = True
         self.move_snakebody()
         self.measure_distance()
@@ -404,14 +413,18 @@ class Snake(gym.Env):
                      wall_up, wall_right, wall_down, wall_left,
                      int(self.snake.direction == 'up'), int(self.snake.direction == 'right'), int(self.snake.direction == 'down'), int(self.snake.direction == 'left')]
         else:
+        # extend state for meat , apply for run RB
             
-              state = [int(self.snake.y <  self.apple.y), int(self.snake.x < self.apple.x), int(self.snake.y >  self.apple.y), int(self.snake.x > self.apple.x),
+              state = [ self.eaten_meat,self.eaten_apple, int(self.snake.y <  self.apple.y), int(self.snake.x < self.apple.x), int(self.snake.y >  self.apple.y), int(self.snake.x > self.apple.x),
                     int(self.snake.y <  self.meat.y), int(self.snake.x < self.meat.x), int(self.snake.y >  self.meat.y), int(self.snake.x > self.meat.x),
                     int(wall_up or body_up), int(wall_right or body_right), int(wall_down or body_down), int(wall_left or body_left),
                     int(self.snake.direction == 'up'), int(self.snake.direction == 'right'), int(self.snake.direction == 'down'), int(self.snake.direction == 'left')]
 
         # print(state)
         #print(self.eaten_food)
+        #print(" self.eaten_food", self.eaten_food)
+        #print("self.eaten_apple",self.eaten_apple)
+        #print("self.eaten_meat",self.eaten_meat)
         
         return state
 
