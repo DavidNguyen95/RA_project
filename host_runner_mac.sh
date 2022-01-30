@@ -13,6 +13,6 @@ docker run -t -i \
   -e DISPLAY=${DISPLAY_QUARTZX}:0 \
   -v ${PWD}/snake:/RA_ws/snake \
   ${DOCKER_IMAGE_ID} \
-  ${@}
+  ${@} \
 
 

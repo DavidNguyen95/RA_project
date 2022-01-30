@@ -75,12 +75,24 @@ class DQN:
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
 
+    def save(self, name):
+        self.model.save_weights(name)
+
+    def load(self, name):
+        self.model.load_weights(name)
+
+
 
 def train_dqn(episode, env):
     
     sum_of_rewards = []
     agent = DQN(env, params)
+
+    e=66
+    env.seed(e)
+
     for e in range(episode):
+        # set seed for the model
         RA= RA_agent ()
         state = env.reset()
         state = np.reshape(state, (1, env.state_space))
@@ -113,11 +125,44 @@ def train_dqn(episode, env):
                 #print(f'final state before dying: {str(prev_state)}')
                 print(f'episode: {e+1}/{episode}, score: {score}')
                 
+                
                 break
         sum_of_rewards.append(score)
+        # save the trained DQN model and weights to restore it later
+        agent.save('final_weights.h5')
+        #plot_result(sum_of_rewards)
+                 
+    return sum_of_rewards
+
+# load the model and model weights from saved model to predict the next action then run the game for 10 episodes
+def test_dqn(episode, env):
+    score=0
+    agent = DQN(env, params)
+    agent.load('final_weights.h5')
+    env.seed(66)
+    sum_of_rewards=[]
+    for e in range(episode):
+        state = env.reset()
+        state = np.reshape(state, (1, env.state_space))
+        score = 0
+        max_steps = 10000
+        for i in range(max_steps):
+            action = agent.act(state)
+            prev_state = state
+            next_state, reward, done,_ = env.step(action)
+            next_state = np.reshape(next_state, (1, env.state_space))
+            state = next_state
+            score = score + reward
+            if done:
+                print(f'episode: {e+1}/{episode}, score: {score}')
+                break
+        sum_of_rewards.append(score)
+
     return sum_of_rewards
 
 
+
+    
 if __name__ == '__main__':
 
     params = dict()
@@ -129,9 +174,11 @@ if __name__ == '__main__':
     params['epsilon_decay'] = .995
     params['learning_rate'] = 0.00025
     params['layer_sizes'] = [128, 128, 128]
+    train = True #change it to false to test the trained model
 
     results = dict()
-    ep = 300
+    ep = 30
+    ep_test=15
 
     # for batchsz in [1, 10, 100, 1000]:
     #     print(batchsz)
@@ -147,7 +194,14 @@ if __name__ == '__main__':
     #     print(env_info)
     #     env = Snake(env_info=env_info)
     env = Snake()
-    sum_of_rewards = train_dqn(ep, env)
+    if train:
+        sum_of_rewards = train_dqn(ep, env)
+    else:
+        # run test dqn
+        sum_of_rewards = test_dqn(ep_test, env)
+    print(sum_of_rewards)
+        
     results[params['name']] = sum_of_rewards
+
 
     plot_result(results, direct=True, k=20)
