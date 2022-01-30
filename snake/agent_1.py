@@ -9,12 +9,10 @@ import matplotlib.pyplot as plt
 from keras.optimizers import Adam
 from plot_script import plot_result
 import time
-
+from ra_agent import RA_agent
 
 class DQN:
-
     """ Deep Q Network """
-
     def __init__(self, env, params):
 
         self.action_space = env.action_space
@@ -79,28 +77,42 @@ class DQN:
 
 
 def train_dqn(episode, env):
-
+    
     sum_of_rewards = []
     agent = DQN(env, params)
     for e in range(episode):
+        RA= RA_agent ()
         state = env.reset()
         state = np.reshape(state, (1, env.state_space))
         score = 0
         max_steps = 10000
+        #print("######################################")
         for i in range(max_steps):
             action = agent.act(state)
             # print(action)
             prev_state = state
-            next_state, reward, done, _ = env.step(action)
-            score += reward
+            next_state, reward, done,_ = env.step(action)
+            food_check=env.eaten_food
+            #print(food_check) # fine
+            ra_reward_step=RA.trace(food_check)
+            #t_reward_ra+=t_reward_ra
+            
+            t_reward=reward+ra_reward_step
+            #print("reward=",reward)
+            #print("ra_reward_step=",ra_reward_step)
+            #score = score + reward
+            
+            score = score + reward + ra_reward_step
+            #print("score",score)
             next_state = np.reshape(next_state, (1, env.state_space))
-            agent.remember(state, action, reward, next_state, done)
+            agent.remember(state, action, t_reward, next_state, done)
             state = next_state
             if params['batch_size'] > 1:
                 agent.replay()
             if done:
-                print(f'final state before dying: {str(prev_state)}')
+                #print(f'final state before dying: {str(prev_state)}')
                 print(f'episode: {e+1}/{episode}, score: {score}')
+                
                 break
         sum_of_rewards.append(score)
     return sum_of_rewards
@@ -119,7 +131,7 @@ if __name__ == '__main__':
     params['layer_sizes'] = [128, 128, 128]
 
     results = dict()
-    ep = 50
+    ep = 300
 
     # for batchsz in [1, 10, 100, 1000]:
     #     print(batchsz)

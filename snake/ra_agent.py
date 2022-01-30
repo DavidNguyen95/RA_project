@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 class RA_agent:
     def __init__(self):
 
@@ -15,11 +14,11 @@ class RA_agent:
 
         self.transition = {
 
-            ("q1","q1"):-0.1,
-            ("q1","q2"):1,
-            ("q2","q2"):-0.1,
-            ("q2","q3"):1,
-            ("q3","q2"):1,
+            ("q1","q1"):0,
+            ("q1","q2"):10,
+            ("q2","q2"):-5,
+            ("q2","q3"):20,
+            ("q3","q2"):20,
             ("q3","q3"):0
         }
 
@@ -34,42 +33,50 @@ class RA_agent:
         self.initialState = "q1" #return state q1
 
     def compute_RA_state(self,fd):
-        if  self.initialState  = "q1":
+        if  self.initialState  == "q1":
             red_state=False
             green_state=False
-        if  self.initialState  = "q2":
+        if  self.initialState  == "q2":
             red_state=True
             green_state=False
-        if  self.initialState  = "q3":
+        if  self.initialState  == "q3":
             red_state=True
             green_state=True       
         if fd =="red":
             red_state=True
+            print("red")
         if fd== "green":
             green_state=True
+            print("green")
         return red_state, green_state
         
             
     def trace(self,food): 
         ##  note add state in env.step function; 
         ##  no eat : food = None | eat red: food = "red" | eat green : food = "green"
+        if food=="no food":
+            ra_reward  = 0
+        else :
         
-        ra_reward  = 0
-        key_state = self.compute_RA_state(food) #(red,green) (True False)
-
-        state  = self.state_dict[key_state]
-        
-        if self.transition.get((self.initialState,state)) != None:
-            ra_reward = self.transition[(self.initialState,state)]
-            self.initialState = state 
-            if self.initialState=self.finalState:
+            key_state = self.compute_RA_state(food) #(red,green) (True False)
+            
+            if self.state_dict.get(key_state) == None:
                 self.reset()
-                
-        elif self.transition.get((self.initialState,state)) == None:
-            ra_reward=0
-            self.initialState = state 
-            if self.initialState=self.finalState:
-                self.reset() 
+                ra_reward=-5
+            else:
+                ra_state  = self.state_dict[key_state]
+            
+                if self.transition.get((self.initialState,ra_state)) != None:
+                    ra_reward = self.transition[(self.initialState,ra_state)]
+                    self.initialState = ra_state 
+                    if self.initialState==self.finalState:
+                        self.reset()
+                        
+                elif self.transition.get((self.initialState,ra_state)) == None:
+                    ra_reward=0
+                    self.initialState = ra_state 
+                    if self.initialState==self.finalState:
+                        self.reset() 
  
         return ra_reward
 

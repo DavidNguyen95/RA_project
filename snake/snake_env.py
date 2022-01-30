@@ -30,14 +30,14 @@ MEAT_SHAPE = 'square'
 
 class Snake(gym.Env):
 
-    def __init__(self, human=False, env_info={'state_space': None}):
+    def __init__(self, human=False, env_info={'state_space': None}):#coodinates
         super(Snake, self).__init__()
 
         self.done = False
         self.seed()
         self.reward = 0
         self.action_space = 4
-        self.state_space = 12
+        self.state_space = 16
 
         self.total, self.maximum = 0, 0
         self.human = human
@@ -175,7 +175,7 @@ class Snake(gym.Env):
                 self.eaten_food="red"
         else:
             self.eaten_food="no food"
-        print(self.eaten_food)
+        #print(self.eaten_food)
         return self.eaten_food
             
 
@@ -290,9 +290,9 @@ class Snake(gym.Env):
                 self.reset()
         if not reward_given:
             if self.dist_apple < self.prev_dist_apple or self.dist_meat < self.prev_dist_meat:
-                self.reward = 1
+                self.reward = -0.1
             else:
-                self.reward = -1
+                self.reward = -0.5
         # time.sleep(0.1)
         if self.human:
             time.sleep(SLEEP)
@@ -313,7 +313,7 @@ class Snake(gym.Env):
         
         self.run_game()
         state = self.get_state()
-        return state, self.reward, self.done, {}
+        return state, self.reward, self.done,{}
 
     def get_state(self):
         
@@ -374,19 +374,21 @@ class Snake(gym.Env):
             body_left = 1
         else:
             body_left = 0
-        if (self.eaten_food)=="green":
-                food_x, food_y = self.apple.x, self.apple.y
-                food_xsc,food_ysc=self.apple.xsc, self.apple.ysc
-        else:
-                food_x, food_y=self.meat.x, self.meat.y
-                food_xsc, food_ysc = self.meat.xsc, self.meat.ysc
+        
+        #if (self.eaten_food)=="green":
+        #        food_x, food_y = self.apple.x, self.apple.y
+        #        food_xsc,food_ysc=self.apple.xsc, self.apple.ysc
+        #else:
+        #       food_x, food_y=self.meat.x, self.meat.y
+        #       food_xsc, food_ysc = self.meat.xsc, self.meat.ysc
+        
         #food_xsc, food_ysc = self.apple.xsc, self.apple.ysc
         #food_x, food_y = self.apple.x, self.apple.y
 
 
         # state: apple_up, apple_right, apple_down, apple_left, obstacle_up, obstacle_right, obstacle_down, obstacle_left, direction_up, direction_right, direction_down, direction_left
         if self.env_info['state_space'] == 'coordinates':
-                 state = [food_xsc, food_ysc, self.snake.xsc, self.snake.ysc,
+                 state = [self.apple.xsc, self.apple.ysc,self.meat.xsc, self.meat.ysc, self.snake.xsc, self.snake.ysc,
                         int(wall_up or body_up), int(wall_right or body_right), int(
                             wall_down or body_down), int(wall_left or body_left),
                         int(self.snake.direction == 'up'), int(self.snake.direction == 'right'), int(self.snake.direction == 'down'), int(self.snake.direction == 'left')]
@@ -403,10 +405,10 @@ class Snake(gym.Env):
                      int(self.snake.direction == 'up'), int(self.snake.direction == 'right'), int(self.snake.direction == 'down'), int(self.snake.direction == 'left')]
         else:
             
-              state = [int(self.snake.y < food_y), int(self.snake.x < food_x), int(self.snake.y > food_y), int(self.snake.x > food_x),
-                     int(wall_up or body_up), int(wall_right or body_right), int(
-                         wall_down or body_down), int(wall_left or body_left),
-                     int(self.snake.direction == 'up'), int(self.snake.direction == 'right'), int(self.snake.direction == 'down'), int(self.snake.direction == 'left')]
+              state = [int(self.snake.y <  self.apple.y), int(self.snake.x < self.apple.x), int(self.snake.y >  self.apple.y), int(self.snake.x > self.apple.x),
+                    int(self.snake.y <  self.meat.y), int(self.snake.x < self.meat.x), int(self.snake.y >  self.meat.y), int(self.snake.x > self.meat.x),
+                    int(wall_up or body_up), int(wall_right or body_right), int(wall_down or body_down), int(wall_left or body_left),
+                    int(self.snake.direction == 'up'), int(self.snake.direction == 'right'), int(self.snake.direction == 'down'), int(self.snake.direction == 'left')]
 
         # print(state)
         #print(self.eaten_food)
