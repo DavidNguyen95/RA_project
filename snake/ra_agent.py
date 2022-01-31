@@ -51,7 +51,7 @@ class RA_agent:
         return red_state, green_state
         
             
-    def trace(self,food): 
+    def trace(self,food,e): 
         ##  note add state in env.step function; 
         ##  no eat : food = None | eat red: food = "red" | eat green : food = "green"
         if food=="no food":
@@ -67,9 +67,14 @@ class RA_agent:
                 ra_state  = self.state_dict[key_state]
             
                 if self.transition.get((self.initialState,ra_state)) != None:
+                    if [(self.initialState,ra_state)]==[("q2","q3")]:
+                        print ("pair")
+                        e.pair+=1
+                        e.update_score()
                     ra_reward = self.transition[(self.initialState,ra_state)]
                     self.initialState = ra_state 
                     if self.initialState==self.finalState:
+                        #pa+=1
                         self.reset()
                         
                 elif self.transition.get((self.initialState,ra_state)) == None:

@@ -14,7 +14,7 @@ PIXEL_W = 20*WIDTH   # pixel width + border on both sides
 
 SLEEP = 0.2     # time to wait between steps
 
-GAME_TITLE = 'Snake'
+GAME_TITLE = 'Snake RA'
 BG_COLOR = 'white'
 
 SNAKE_SHAPE = 'square'
@@ -40,6 +40,7 @@ class Snake(gym.Env):
         self.state_space = 18
 
         self.total, self.maximum = 0, 0
+        self.pair,self.maxpair=0,0
         self.human = human
         self.env_info = env_info
         self.food_count=0
@@ -54,6 +55,8 @@ class Snake(gym.Env):
         self.win.bgcolor(BG_COLOR)
         self.win.tracer(0)
         self.win.setup(width=PIXEL_W+32, height=PIXEL_H+32)
+        #self.win.setup(width=PIXEL_W+64, height=PIXEL_H+64)
+
 
         # snake
         self.snake = turtle.Turtle()
@@ -94,7 +97,7 @@ class Snake(gym.Env):
         self.score.penup()
         self.score.hideturtle()
         self.score.goto(0, 100)
-        self.score.write(f"Total: {self.total}   Highest: {self.maximum}",
+        self.score.write(f"Total: {self.total}   Highest: {self.maximum}  \n \n Pair:{self.pair}  Highest: {self.maxpair}",
                          align='center', font=('Courier', 18, 'normal'))
 
         # control
@@ -191,18 +194,22 @@ class Snake(gym.Env):
 
         if self.total >= self.maximum:
             self.maximum = self.total
+        if self.pair >= self.maxpair:
+            self.maxpair = self.pair
+            
 
         self.score.clear()
-
-        self.score.write(f"Total: {self.total}   Highest: {self.maximum}",
+        
+        self.score.write(f"Total: {self.total}   Highest: {self.maximum}  \n \n Pair:{self.pair}  Highest: {self.maxpair}",
                          align='center', font=('Courier', 18, 'normal'))
 
     def reset_score(self):
         self.score.clear()
         self.total = 0
+        self.pair = 0 
         data=self.ra_agent_params(dummy=False)
 
-        self.score.write(f"Total: {self.total}   Highest: {self.maximum}",
+        self.score.write(f"Total: {self.total}   Highest: {self.maximum}  \n \n Pair: {self.pair}  Highest: {self.maxpair}",
                          align='center', font=('Courier', 18, 'normal'))
 
     def add_to_body(self):
@@ -265,6 +272,7 @@ class Snake(gym.Env):
         self.snake.direction = 'stop'
         self.reward = 0
         self.total = 0
+        self.pair=0
         self.done = False
         self.eaten_apple=0
         self.eaten_meat =0 
@@ -274,6 +282,7 @@ class Snake(gym.Env):
         return state
 
     def run_game(self):
+        
         self.eaten_food="no food"
         reward_given = False
         self.win.update()

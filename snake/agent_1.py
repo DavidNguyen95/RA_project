@@ -103,10 +103,15 @@ def train_dqn(episode, env):
             action = agent.act(state)
             # print(action)
             prev_state = state
-            next_state, reward, done,_ = env.step(action)
             food_check=env.eaten_food
+            ra_reward_step =RA.trace(food_check, env)
+            #env.update_score()
+            next_state, reward, done,_ = env.step(action)
+            
+            #print(env.pair)
+            #env.pair=1
             #print(food_check) # fine
-            ra_reward_step=RA.trace(food_check)
+            
             #t_reward_ra+=t_reward_ra
             
             t_reward=reward+ra_reward_step
@@ -177,7 +182,7 @@ if __name__ == '__main__':
     train = True #change it to false to test the trained model
 
     results = dict()
-    ep = 30
+    ep = 50
     ep_test=15
 
     # for batchsz in [1, 10, 100, 1000]:
