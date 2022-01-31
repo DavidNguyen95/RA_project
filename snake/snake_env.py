@@ -392,7 +392,7 @@ class Snake(gym.Env):
         #       food_xsc, food_ysc = self.meat.xsc, self.meat.ysc
         
         #food_xsc, food_ysc = self.apple.xsc, self.apple.ysc
-        #food_x, food_y = self.apple.x, self.apple.y
+        food_x, food_y = self.apple.x, self.apple.y
 
 
         # state: apple_up, apple_right, apple_down, apple_left, obstacle_up, obstacle_right, obstacle_down, obstacle_left, direction_up, direction_right, direction_down, direction_left
