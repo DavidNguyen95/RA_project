@@ -177,12 +177,9 @@ if __name__ == '__main__':
     train = True #change it to false to test the trained model
 
     results = dict()
-<<<<<<< HEAD
-    ep = 1000
-=======
+
     ep = 30
     ep_test=15
->>>>>>> 7aa6b7614c188b0de0fcaa156967c6102d0e52bc
 
     # for batchsz in [1, 10, 100, 1000]:
     #     print(batchsz)
