@@ -177,7 +177,6 @@ if __name__ == '__main__':
     train = True #change it to false to test the trained model
 
     results = dict()
-
     ep = 30
     ep_test=15
 
