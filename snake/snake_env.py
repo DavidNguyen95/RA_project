@@ -37,7 +37,7 @@ class Snake(gym.Env):
         self.seed()
         self.reward = 0
         self.action_space = 4
-        self.state_space = 18
+        self.state_space = 22
 
         self.total, self.maximum = 0, 0
         self.pair,self.maxpair=0,0
@@ -59,6 +59,7 @@ class Snake(gym.Env):
 
 
         # snake
+        self.snake_eyes=[0,0,0,0]
         self.snake = turtle.Turtle()
         self.snake.shape(SNAKE_SHAPE)
         self.snake.speed(0)
@@ -218,6 +219,7 @@ class Snake(gym.Env):
         body.shape('square')
         body.color('black')
         body.penup()
+        #print("body",body[0])
         self.snake_body.append(body)
 
     def move_snakebody(self):
@@ -236,13 +238,35 @@ class Snake(gym.Env):
                               ** 2 + (self.snake.ycor()-self.apple.ycor())**2)
         self.dist_meat = math.sqrt((self.snake.xcor()-self.meat.xcor())
                                   ** 2 + (self.snake.ycor()-self.meat.ycor())**2)
+    
 
+        
     def body_check_snake(self):
+    
+        #print("self.snake",self.snake.pos())
         if len(self.snake_body) > 1:
+            #print("self.snake",self.snake.pos())
             for body in self.snake_body[1:]:
+
+                #print("body",body.pos())
+                
+                if (self.snake.xcor()+20,self.snake.ycor())==body.pos():
+                    self.snake_eyes[0]=1
+                    #print("haha")
+                if (self.snake.xcor()-20,self.snake.ycor())==body.pos():
+                    self.snake_eyes[1]=1
+                    #print("haha")
+                if (self.snake.xcor(),self.snake.ycor()+20)==body.pos():
+                    self.snake_eyes[2]=1
+                    #print("haha")
+                if (self.snake.xcor(),self.snake.ycor()-20)==body.pos():
+                    self.snake_eyes[3]=1
+                    #print("haha")
+                #print("self.snake_eyes",self.snake_eyes)
                 if body.distance(self.snake) < 20:
                     self.reset_score()
                     return True
+                    
     def body_check_meat(self):
         if len(self.snake_body) > 0:
             for body in self.snake_body[:]:
@@ -255,7 +279,6 @@ class Snake(gym.Env):
                 if body.distance(self.apple) < 20:
                         return True
 
-
     def wall_check(self):
         if self.snake.xcor() > 200 or self.snake.xcor() < -200 or self.snake.ycor() > 200 or self.snake.ycor() < -200:
             self.reset_score()
@@ -266,7 +289,7 @@ class Snake(gym.Env):
             time.sleep(1)
         for body in self.snake_body:
             body.goto(1000, 1000)
-
+        self.snake_eyes=[0,0,0,0]
         self.snake_body = []
         self.snake.goto(SNAKE_START_LOC_H, SNAKE_START_LOC_V)
         self.snake.direction = 'stop'
@@ -282,15 +305,15 @@ class Snake(gym.Env):
         return state
 
     def run_game(self):
-        
+        self.snake_eyes=[0,0,0,0]
         self.eaten_food="no food"
         reward_given = False
         self.win.update()
         self.move_snake()
-        
+
         if self.move_apple():
             #print("dang o dayyyyyy")
-            self.reward = 0
+            self.reward = 10
             reward_given = True
         self.move_snakebody()
         self.measure_distance()
@@ -405,26 +428,24 @@ class Snake(gym.Env):
 
 
         # state: apple_up, apple_right, apple_down, apple_left, obstacle_up, obstacle_right, obstacle_down, obstacle_left, direction_up, direction_right, direction_down, direction_left
-        if self.env_info['state_space'] == 'coordinates':
-                 state = [self.apple.xsc, self.apple.ysc,self.meat.xsc, self.meat.ysc, self.snake.xsc, self.snake.ysc,
-                        int(wall_up or body_up), int(wall_right or body_right), int(
-                            wall_down or body_down), int(wall_left or body_left),
-                        int(self.snake.direction == 'up'), int(self.snake.direction == 'right'), int(self.snake.direction == 'down'), int(self.snake.direction == 'left')]
+        if self.env_info['state_space'] == 'coordinates': #16
+                 state = [ self.eaten_meat,self.eaten_apple,self.apple.xsc, self.apple.ysc,self.meat.xsc, self.meat.ysc, self.snake.xsc, self.snake.ysc,
+                        int(wall_up or body_up), int(wall_right or body_right), int(wall_down or body_down), int(wall_left or body_left),
+                        int(self.snake.direction == 'up'), int(self.snake.direction == 'right'), int(self.snake.direction == 'down'), int(self.snake.direction == 'left'),0,0]
             
         elif self.env_info['state_space'] == 'no direction':
             state = [int(self.snake.y < food_y), int(self.snake.x < food_y), int(self.snake.y > food_y), int(self.snake.x > food_x),
-                     int(wall_up or body_up), int(wall_right or body_right), int(
-                         wall_down or body_down), int(wall_left or body_left),
+                     int(wall_up or body_up), int(wall_right or body_right), int( wall_down or body_down), int(wall_left or body_left),
                      0, 0, 0, 0]
         elif self.env_info['state_space'] == 'no body knowledge':
         
             state = [int(self.snake.y < food_y), int(self.snake.x < food_x), int(self.snake.y > food_y), int(self.snake.x > food_x),
-                     wall_up, wall_right, wall_down, wall_left,
-                     int(self.snake.direction == 'up'), int(self.snake.direction == 'right'), int(self.snake.direction == 'down'), int(self.snake.direction == 'left')]
+                     wall_up, wall_right, wall_down, wall_left, int(self.snake.direction == 'up'), int(self.snake.direction == 'right'), int(self.snake.direction == 'down'), int(self.snake.direction == 'left')]
         else:
         # extend state for meat , apply for run RB
             
-              state = [ self.eaten_meat,self.eaten_apple, int(self.snake.y <  self.apple.y), int(self.snake.x < self.apple.x), int(self.snake.y >  self.apple.y), int(self.snake.x > self.apple.x),
+            state = [ self.snake_eyes[0],self.snake_eyes[1],self.snake_eyes[2],self.snake_eyes[3],
+                    self.eaten_meat,self.eaten_apple, int(self.snake.y <  self.apple.y), int(self.snake.x < self.apple.x), int(self.snake.y >  self.apple.y), int(self.snake.x > self.apple.x),
                     int(self.snake.y <  self.meat.y), int(self.snake.x < self.meat.x), int(self.snake.y >  self.meat.y), int(self.snake.x > self.meat.x),
                     int(wall_up or body_up), int(wall_right or body_right), int(wall_down or body_down), int(wall_left or body_left),
                     int(self.snake.direction == 'up'), int(self.snake.direction == 'right'), int(self.snake.direction == 'down'), int(self.snake.direction == 'left')]

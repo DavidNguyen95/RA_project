@@ -16,9 +16,9 @@ class RA_agent:
 
             ("q1","q1"):0,
             ("q1","q2"):10,
-            ("q2","q2"):-5,
-            ("q2","q3"):20,
-            ("q3","q2"):20,
+            ("q2","q2"):0,
+            ("q2","q3"):60,
+            ("q3","q2"):60,
             ("q3","q3"):0
         }
 
@@ -44,10 +44,10 @@ class RA_agent:
             green_state=True       
         if fd =="red":
             red_state=True
-            print("red")
+            #print("red")
         if fd== "green":
             green_state=True
-            print("green")
+            #print("green")
         return red_state, green_state
         
             
@@ -62,13 +62,13 @@ class RA_agent:
             
             if self.state_dict.get(key_state) == None:
                 self.reset()
-                ra_reward=-5
+                ra_reward=-10
             else:
                 ra_state  = self.state_dict[key_state]
             
                 if self.transition.get((self.initialState,ra_state)) != None:
                     if [(self.initialState,ra_state)]==[("q2","q3")]:
-                        print ("pair")
+                        #print ("pair")
                         e.pair+=1
                         e.update_score()
                     ra_reward = self.transition[(self.initialState,ra_state)]
