@@ -63,6 +63,7 @@ class Snake(gym.Env):
         self.snake = turtle.Turtle()
         self.snake.shape(SNAKE_SHAPE)
         self.snake.speed(0)
+       
         self.snake.penup()
         self.snake.color(SNAKE_COLOR)
         self.snake.goto(SNAKE_START_LOC_H, SNAKE_START_LOC_V)

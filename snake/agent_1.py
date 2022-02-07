@@ -141,26 +141,48 @@ def train_dqn(episode, env):
 
 # load the model and model weights from saved model to predict the next action then run the game for 10 episodes
 def test_dqn(episode, env):
-    score=0
     agent = DQN(env, params)
     agent.load('final_weights.h5')
     env.seed(66)
     sum_of_rewards=[]
     for e in range(episode):
+        RA = RA_agent()
         state = env.reset()
         state = np.reshape(state, (1, env.state_space))
         score = 0
         max_steps = 10000
+        
         for i in range(max_steps):
             action = agent.act(state)
+            # print(action)
             prev_state = state
-            next_state, reward, done,_ = env.step(action)
+            food_check = env.eaten_food
+            ra_reward_step = RA.trace(food_check, env)
+            #env.update_score()
+            next_state, reward, done, _ = env.step(action)
+
+            #print(env.pair)
+            #env.pair=1
+            #print(food_check) # fine
+
+            #t_reward_ra+=t_reward_ra
+
+            t_reward = reward+ra_reward_step
+            #print("reward=",reward)
+            #print("ra_reward_step=",ra_reward_step)
+            #score = score + reward
+
+            score = score + reward + ra_reward_step
+            #print("score",score)
             next_state = np.reshape(next_state, (1, env.state_space))
+            agent.remember(state, action, t_reward, next_state, done)
             state = next_state
-            score = score + reward
+            if params['batch_size'] > 1:
+                agent.replay()
             if done:
+                #print(f'final state before dying: {str(prev_state)}')
                 print(f'episode: {e+1}/{episode}, score: {score}')
-                break
+
         sum_of_rewards.append(score)
 
     return sum_of_rewards
@@ -179,10 +201,10 @@ if __name__ == '__main__':
     params['epsilon_decay'] = .995
     params['learning_rate'] = 0.00025
     params['layer_sizes'] = [128, 128, 128]
-    train = True #change it to false to test the trained model
+    train = False #change it to false to test the trained model
 
     results = dict()
-    ep = 60
+    ep = 200
     ep_test=15
 
     # for batchsz in [1, 10, 100, 1000]:
