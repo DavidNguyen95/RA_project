@@ -52,7 +52,9 @@ class Snake(gym.Env):
         # screen/background
         self.win = turtle.Screen()
         self.win.title(GAME_TITLE)
+        self.win.register_shape('snake.gif')
         self.win.bgcolor(BG_COLOR)
+        self.win.bgpic('back.png')
         self.win.tracer(0)
         self.win.setup(width=PIXEL_W+32, height=PIXEL_H+32)
         #self.win.setup(width=PIXEL_W+64, height=PIXEL_H+64)
@@ -61,8 +63,9 @@ class Snake(gym.Env):
         # snake
         self.snake_eyes=[0,0,0,0]
         self.snake = turtle.Turtle()
-        self.snake.shape(SNAKE_SHAPE)
+        self.snake.shape('square')
         self.snake.speed(0)
+        self.snake.tilt(90)
        
         self.snake.penup()
         self.snake.color(SNAKE_COLOR)
