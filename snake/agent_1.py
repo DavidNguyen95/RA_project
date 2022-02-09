@@ -201,10 +201,10 @@ if __name__ == '__main__':
     params['epsilon_decay'] = .995
     params['learning_rate'] = 0.00025
     params['layer_sizes'] = [128, 128, 128]
-    train = False #change it to false to test the trained model
+    train = True #change it to false to test the trained model
 
     results = dict()
-    ep = 200
+    ep = 130
     ep_test=15
 
     # for batchsz in [1, 10, 100, 1000]:
