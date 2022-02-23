@@ -315,7 +315,7 @@ class Snake(gym.Env):
         reward_given = False
         self.win.update()
         self.move_snake()
-
+        print("self.snake_body",len(self.snake_body))
         if self.move_apple():
             #print("dang o dayyyyyy")
             self.reward = 20
