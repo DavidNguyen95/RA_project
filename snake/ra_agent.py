@@ -15,17 +15,17 @@ class RA_agent:
         self.transition = {
 
             ("q1","q1"):0,
-            ("q1","q2"):10,
-            ("q2","q2"):0,
-            ("q2","q3"):60,
-            ("q3","q2"):60,
-            ("q3","q3"):0
+            ("q1","q2"):30,
+            ("q2","q2"):-30,
+            ("q2","q3"):50,
+            ("q3","q2"):50,
+            ("q3","q3"):-30
         }
 
         self.state_dict = {
             (False,False):"q1",
             (True,False):"q2",
-            (True,True):"q3" 
+            (False,True):"q3" 
         }
 
 
@@ -33,6 +33,7 @@ class RA_agent:
         self.initialState = "q1" #return state q1
 
     def compute_RA_state(self,fd):
+        '''
         if  self.initialState  == "q1":
             red_state=False
             green_state=False
@@ -42,11 +43,14 @@ class RA_agent:
         if  self.initialState  == "q3":
             red_state=True
             green_state=True       
-        if fd =="red":
+        '''
+        if fd =="red" :
             red_state=True
+            green_state = False
             #print("red")
         if fd== "green":
             green_state=True
+            red_state=False
             #print("green")
         return red_state, green_state
         
@@ -65,18 +69,20 @@ class RA_agent:
                 ra_reward=-10
             else:
                 ra_state  = self.state_dict[key_state]
+                #print(ra_state)
             
                 if self.transition.get((self.initialState,ra_state)) != None:
                     if [(self.initialState,ra_state)]==[("q2","q3")]:
                         #print ("pair")
                         e.pair+=1
-                        e.update_score()
+                        #e.update_score()
                     ra_reward = self.transition[(self.initialState,ra_state)]
                     self.initialState = ra_state 
+                    '''
                     if self.initialState==self.finalState:
                         #pa+=1
                         self.reset()
-                        
+                    '''    
                 elif self.transition.get((self.initialState,ra_state)) == None:
                     ra_reward=0
                     self.initialState = ra_state 

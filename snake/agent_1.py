@@ -103,11 +103,13 @@ def train_dqn(episode, env):
             action = agent.act(state)
             # print(action)
             prev_state = state
-            food_check=env.eaten_food
-            ra_reward_step =RA.trace(food_check, env)
+            
             #env.update_score()
             next_state, reward, done,_ = env.step(action)
-            
+            food_check=env.eaten_food
+            ra_reward_step =RA.trace(food_check, env)
+            #print("reward=",reward)
+            #print("ra reward=",ra_reward_step)
             #print(env.pair)
             #env.pair=1
             #print(food_check) # fine
@@ -134,7 +136,7 @@ def train_dqn(episode, env):
                 break
         sum_of_rewards.append(score)
         # save the trained DQN model and weights to restore it later
-        agent.save('final_weights.h5')
+    agent.save('final_weights.h5')
         #plot_result(sum_of_rewards)
                  
     return sum_of_rewards
@@ -160,7 +162,7 @@ def test_dqn(episode, env):
             ra_reward_step = RA.trace(food_check, env)
             #env.update_score()
             next_state, reward, done, _ = env.step(action)
-
+            print("reward=",reward)
             #print(env.pair)
             #env.pair=1
             #print(food_check) # fine
@@ -194,7 +196,7 @@ if __name__ == '__main__':
 
     params = dict()
     params['name'] = None
-    params['epsilon'] = 1
+    params['epsilon'] = 0.9
     params['gamma'] = .95
     params['batch_size'] = 500
     params['epsilon_min'] = .01
@@ -204,7 +206,7 @@ if __name__ == '__main__':
     train = True #change it to false to test the trained model
 
     results = dict()
-    ep = 130
+    ep = 200
     ep_test=15
 
     # for batchsz in [1, 10, 100, 1000]:
