@@ -64,5 +64,5 @@ def plot_result(data_name_array, direct=False, k=5):
     ax.set_title("Learning Curve", fontsize = 15)
     ax.set_xlabel('Episodes', fontsize = 14)
     ax.set_ylabel("Sum of\nreward\nduring\nepisode", rotation=0, labelpad=40, fontsize = 14)
-    ax.set_ylim([-200, max_to_hundred])
+    ax.set_ylim([-600, max_to_hundred])
     plt.show()     

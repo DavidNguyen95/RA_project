@@ -206,7 +206,7 @@ if __name__ == '__main__':
     train = True #change it to false to test the trained model
 
     results = dict()
-    ep = 400
+    ep = 200
     ep_test=15
 
     # for batchsz in [1, 10, 100, 1000]:
